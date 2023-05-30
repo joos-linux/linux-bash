@@ -112,9 +112,9 @@ echo "Summa = $summa"
 ```bash
 #!/bin/bash
 
-my_index=`test -f /var/www/html/index.html`
+my_index=`test -f /var/www/html/index.html && echo $?`
 
-my_port=`bash -c "</dev/tcp/localhost/80"`
+my_port=`bash -c "</dev/tcp/localhost/80" && echo $?`
 
 if [ $my_index -eq 0 ] && [ $port -eq 0 ]; then
         exit 0
@@ -122,3 +122,33 @@ else
         exit 1
 fi
 ```
+
+keepalived.conf
+```
+global_defs {
+    enable_script_security
+}
+
+vrrp_script b_check {
+    script "/usr/local/bin/bash.sh"
+    interval 3
+    rise 3
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface enp0s3
+    virtual_router_id 15
+    priority 205
+    advert_int 1
+    virtual_ipaddress {
+        192.168.0.30/24
+    }
+    track_script {
+        b_check
+    }
+
+}
+
+```
+
