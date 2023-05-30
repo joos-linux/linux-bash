@@ -123,7 +123,7 @@ else
 fi
 ```
 
-keepalived.conf
+### keepalived.conf
 ```
 global_defs {
     enable_script_security
@@ -152,3 +152,40 @@ vrrp_instance VI_1 {
 
 ```
 
+### check la and write 0 - 1 to file
+```
+#!/bin/bash
+
+my_la=`cat /proc/loadavg |awk {'print $1'}`
+la=$(echo $my_la*100 | bc)
+echo $la
+
+if [ ${la%.*} -lt 50 ]; then
+        echo "0" > /usr/local/bin/check
+else
+        echo "1" > /usr/local/bin/check
+fi
+
+```
+
+### keepalived.conf
+```
+vrrp_track_file track_file {
+      file /usr/local/bin/check
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface enp0s3
+    virtual_router_id 15
+    priority 205
+    advert_int 1
+    virtual_ipaddress {
+        192.168.0.30/24
+    }
+
+      track_file {
+         track_file weight -10
+   }
+}
+```
