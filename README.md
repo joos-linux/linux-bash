@@ -107,3 +107,18 @@ myFunction()
 myFunction 50 10
 echo "Summa = $summa"
 ```
+
+### check file + check port
+```bash
+#!/bin/bash
+
+my_index=`test -f /var/www/html/index.html && echo $?`
+
+port=`bash -c "</dev/tcp/localhost/80" && echo $?`
+
+if [ $my_index -eq 0 ] && [ $port -eq 0 ]; then
+        return 0
+else
+        return 1
+fi
+```
