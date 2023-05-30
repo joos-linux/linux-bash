@@ -153,7 +153,7 @@ vrrp_instance VI_1 {
 ```
 
 ### check la and write 0 - 1 to file
-```
+```bash
 #!/bin/bash
 
 my_la=`cat /proc/loadavg |awk {'print $1'}`
@@ -164,6 +164,21 @@ if [ ${la%.*} -lt 50 ]; then
         echo "0" > /usr/local/bin/check
 else
         echo "1" > /usr/local/bin/check
+fi
+
+```
+```bash
+#!/bin/bash
+
+my_la=`cat /proc/loadavg |awk {'print $1'}`
+la=$(echo $my_la*100 | bc)
+
+
+if [ ${la%.*} -lt 50 ]; then
+        echo "0" > /usr/local/bin/check
+else
+        new_weight=$(echo ${la%.*}/-2 | bc)
+        echo $new_weight > /usr/local/bin/check
 fi
 
 ```
