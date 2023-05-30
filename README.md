@@ -112,13 +112,13 @@ echo "Summa = $summa"
 ```bash
 #!/bin/bash
 
-my_index=`test -f /var/www/html/index.html && echo $?`
+my_index=`test -f /var/www/html/index.html`
 
-port=`bash -c "</dev/tcp/localhost/80" && echo $?`
+my_port=`bash -c "</dev/tcp/localhost/80"`
 
 if [ $my_index -eq 0 ] && [ $port -eq 0 ]; then
-        return 0
+        exit 0
 else
-        return 1
+        exit 1
 fi
 ```
