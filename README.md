@@ -204,3 +204,13 @@ vrrp_instance VI_1 {
    }
 }
 ```
+
+### backup + log to syslog
+```bash
+rsync -a --delete /home/joos/ /tmp/backup
+
+if [ "$?" -eq 0 ]; then
+        logger "Backup success"
+else    logger "Backup failed"
+fi
+```
