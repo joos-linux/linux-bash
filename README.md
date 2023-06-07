@@ -214,3 +214,34 @@ if [ "$?" -eq 0 ]; then
 else    logger "Backup failed"
 fi
 ```
+
+### backup user to server with increment and delete old folder
+```bash
+#!/bin/bash
+srv_user=joos
+srv_ip=10.103.7.20
+rsync -avz --progress --delete $srv_user@$srv_ip:/home/joos/ /tmp/current/ --backup --backup-dir=/tmp/increment/`date +%Y-%m-%d-%H-%M`/
+
+cd /tmp/increment/
+ls -t | tail -n +6 | xargs rm -rf --
+```
+
+### restore user-file from increment-backup (show backups - take number - restore)
+```bash
+#!/bin/bash
+n=1
+for file in /tmp/increment/*; do
+    echo "$n - $(basename "$file")"
+    ((n++))
+done
+
+read -p "Write number to restore (1-5): " x
+
+m=1
+for file in /tmp/increment/*; do
+    if [ "$m" -le "$x" ]; then
+        rsync -avz $file/ joos@10.103.7.20:/home/joos/
+    fi
+    ((m++))
+done
+```
